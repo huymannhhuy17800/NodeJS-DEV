@@ -1,5 +1,10 @@
-import { Role } from "./role";
-import { Status } from "./status";
+export enum Role {
+  ADMIN = "ADMIN",
+  MNG = "MANAGER",
+  DEV = "DEVELOPER",
+}
+
+export type Status = "ACTIVE" | "INACTIVE";
 
 export interface User {
   id?: number;

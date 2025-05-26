@@ -1,6 +1,6 @@
-import { Role } from "./role";
-import { Project } from "./project";
-import { User } from "./user";
+import { Project } from "../interfaces/project";
+import { User } from "../interfaces/user";
+import { Role } from "../interfaces/user";
 
 export class ProjectManager {
   projects: Project[];
@@ -69,11 +69,7 @@ export class ProjectManager {
     return foundMember;
   }
 
-  isAdmin(user: User): user is User {
-    if ((user as User).role === Role.ADMIN) {
-      return true;
-    } else {
-      return false;
-    }
+  isAdmin(user: User): user is User & { role: Role.ADMIN } {
+    return user.role === Role.ADMIN;
   }
 }

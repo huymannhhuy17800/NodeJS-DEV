@@ -1,5 +1,5 @@
-import { ProjectManager } from "./project-manager";
-import { Role } from "./role";
+import { ProjectManager } from "./class/project-manager";
+import { Role } from "./interfaces/user";
 
 // create ProjectManager
 const projectMng = new ProjectManager();
