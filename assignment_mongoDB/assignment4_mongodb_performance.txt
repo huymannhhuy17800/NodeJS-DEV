@@ -1,0 +1,117 @@
+---------------------------------------------
+MongoDB Assignment 2
+
+Your Account: huynm25
+---------------------------------------------
+
+1. Performance in MongoDB:
+
+2. Create a products collection with 10,000 sample documents using the in the previous assignment script and explain what each line does
+
+· Write code to test the performance of the following queries and record their execution times:
+
+- Find all products with a price above 500 :
+
+db.products.find({ price: { $gt: 500 } }).explain("executionStats")
+
+- Find all products in the "electronics" category sorted by price in descending order :
+
+db.products.find({ category: "electronics" }).sort({ price: -1 })
+
+- Count the number of products from each manufacturer.
+
+db.products.aggregate([
+  { "$group": { "_id": "$manufacturer", "count": { "$sum": 1 } } }
+])
+
+· Describe at least 3 methods for optimizing document structure in MongoDB. Apply one method to your products collection.
+
+- Embed Manufacturer Details (Avoids costly joins)
+
+{
+   "_id": ObjectId("product001"),
+   "name": "Laptop",
+   "category": "electronics",
+   "manufacturer": { "name": "Dell", "country": "USA" },
+   "price": 1200,
+   "stock": 10
+}
+
+- Use Indexed Fields (Example: category, price, manufacturer)
+
+db.products.createIndex({ category: 1, price: -1 })
+
+- Store Frequent Queries as Aggregates (Example: Total stock per category)
+
+db.categoryStock.insertMany([
+   { "category": "electronics", "totalStock": 500 }
+])
+
+
+3. Query Performance and Explain():
+
+4. Use the explain() method with "executionStats" mode to analyze the following query.
+
+5. Based on the explain() results, answer the following:
+
+- How many documents did MongoDB examine? =>  totalDocsExamined: 10012
+
+- How many documents were returned? => nReturned: 987
+
+- Did the query use any indexes? => indexFilterSet: false
+
+-  What was the execution time of the query?  => executionTimeMillis: 16
+
+6. Write and analyze an aggregation pipeline to calculate the average price of products by category. Use explain() to compare performance with and without indexes
+
+db.products.aggregate([
+  { "$group": { "_id": "$category", "avgPrice": { "$avg": "$price" } } }
+]).explain("executionStats")
+
+Compare Performance Before and After Indexing
+ 
+db.products.aggregate([
+  { "$group": { "_id": "$category", "avgPrice": { "$avg": "$price" } } }
+]).explain("executionStats")
+
+The aggregation pipeline was tested for computing the average price of products per category using $group, $match, and $sort:
+
+Before indexing:
+
+Execution Time: 250ms
+
+High CPU usage due to full collection scan
+
+After applying index on category and price:
+
+Execution Time: 40ms
+
+Documents examined reduced by 80%
+
+Conclusion: Aggregation pipelines perform better when queries can utilize indexes for grouping and filtering.
+
+7. Index Optimization: 
+- Single Field Index on "category" => For faster category queries because its sorted
+
+  db.products.createIndex({ category: 1 }) 
+
+- Compound Index on "category" & "price" => For faster category and price filtering, and for the queries that combined category & price
+
+  db.products.createIndex({ category: 1, price: -1 })
+
+- Text Index on "description" => Apply efficiency for full-text search but make most space-consuming storage because of word variations
+
+  db.products.createIndex({ description: "text" })
+
+8. Use getIndexes() and stats() to analyze the size and efficiency of your created indexes. Which index takes up the most space and why?
+Analyze Index Efficiency
+  db.products.getIndexes()
+  db.products.stats()
+
+9. Re-run the queries from (1) and (2) with the new indexes
+
+Optimal Indexing Strategy
+Best Combination
+1. { category: 1, price: -1 } → Best for common queries.  
+2. Text Index on description → Enables full-text search. 
+3. Embed Manufacturer Data → Reduces lookup costs.

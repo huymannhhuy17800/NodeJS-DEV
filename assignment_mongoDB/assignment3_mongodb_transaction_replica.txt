@@ -1,0 +1,84 @@
+---------------------------------------------
+MongoDB Assignment 2
+
+Your Account: huynm25
+---------------------------------------------
+
+1. Replica Set Setup:
+Start three MongoDB instances with different ports:
+mongod --replSet myReplicaSet --port 27017 --dbpath /data/db1 --bind_ip 0.0.0.0
+mongod --replSet myReplicaSet --port 27018 --dbpath /data/db2 --bind_ip 0.0.0.0
+mongod --replSet myReplicaSet --port 27019 --dbpath /data/db3 --bind_ip 0.0.0.0
+All nodes belong to the same replica set (bankReplicaSet). 
+Each runs on different ports (27017, 27018, 27019). 
+Separate data directories (/data/db1, /data/db2, /data/db3).
+
+Initiate the Replica Set
+rs.initiate({
+  _id: "bankReplicaSet",
+  members: [
+    { _id: 0, host: "localhost:27017" },
+    { _id: 1, host: "localhost:27018" },
+    { _id: 2, host: "localhost:27019" }
+  ]
+})
+
+Set a 20-Second Synchronization Delay
+cfg = rs.conf();
+cfg.members[1].secondaryDelaySecs = 20;
+cfg.members[2].secondaryDelaySecs = 20;
+rs.reconfig(cfg, { force: true });
+
+
+2. Build the Bank System:
+Step 1: Create BankDB Database and Accounts Collection
+use BankDB
+db.Accounts.insertMany([
+  { "_id": 1, "name": "Alice", "balance": 5000 },
+  { "_id": 2, "name": "Bob", "balance": 3000 }
+])
+
+
+Step 2: Implement Money Transfer Using Transactions
+
+session = db.getMongo().startSession();
+session.startTransaction();
+
+try {
+  sender = session.getDatabase("BankDB").Accounts.findOne({ _id: 1 });
+  receiver = session.getDatabase("BankDB").Accounts.findOne({ _id: 2 });
+
+  if (sender.balance >= 1000) {
+    session.getDatabase("BankDB").Accounts.updateOne(
+      { _id: 1 },
+      { $inc: { balance: -1000 } }
+    );
+    
+    session.getDatabase("BankDB").Accounts.updateOne(
+      { _id: 2 },
+      { $inc: { balance: 1000 } }
+    );
+    
+    session.commitTransaction();
+    print("✅ Money transfer successful!");
+  } else {
+    throw new Error("🚨 Insufficient funds!");
+  }
+} catch (error) {
+  session.abortTransaction();
+  print("❌ Transaction failed:", error.message);
+}
+
+session.endSession();
+
+Step 3: Simulating Failed Transfers
+
+session.startTransaction();
+try {
+  session.getDatabase("BankDB").Accounts.updateOne({ _id: 1 }, { $set: { balance: -999999 } });
+  throw new Error("🚨 Intentional failure!");
+} catch (error) {
+  session.abortTransaction();
+  print("❌ Transaction rolled back:", error.message);
+}
+session.endSession();

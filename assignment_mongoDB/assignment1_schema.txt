@@ -1,0 +1,154 @@
+---------------------------------------------
+MongoDB Assignment
+
+Your Account: huynm25
+---------------------------------------------
+
+1. Identify the Main Entities
+- Students
+- Courses
+- Instructors
+- moduleFeedback
+- instructorFeedback
+
+2. Design the MongoDB Schema:
+  a. Students:
+  studentId: Mã sinh viên (duy nhất)
+  name: Tên sinh viên
+  email: Email của sinh viên
+  courses: Một mảng chứa các khóa học mà sinh viên đã tham gia
+  Sample:
+  {
+    studentId: String,
+    name: String,
+    email: String,
+    courses: [ObjectId]  // Mảng chứa các ObjectId tham chiếu đến khóa học
+  }
+
+  b. Courses:
+  courseId : Mã môn học (duy nhất)
+  title: Tên môn học
+  description: Mô tả môn học
+  modules: Một mảng chứa các phần, chương trong môn học
+   module : 
+    moduleId : Mã của phần học, 
+    title : Tiêu đề phần học, 
+    instructorId: Mã giáo viên
+  Sample:
+  {
+    courseId: String,
+    title: String,
+    description: String,
+    modules: 
+    [
+      { moduleId : String,
+        title : String,
+        instructorId : String 
+      },...              
+    ] // Mảng chứa các Object module 
+  }
+
+  c. Instructors: 
+  instructorId : Mã giáo viên
+  name : Tên giáo viên
+  email : Email giáo viên
+  phone : Sđt giáo viên
+  courses: Một mảng chứa các khóa học mà giáo viên này dạy
+  Sample:
+  {
+    instructorId : String,
+    name: String,
+    email: String,
+    phone : String,
+    courses : [ObjectId] // Mảng chứa các courseId tham chiếu môn học mà giáo viên này dạy
+  }
+
+  d. ModuleFeedback
+  _id : Mã của 1 feedback của 1 module (duy nhất)
+  studentId : Mã sinh viên feedback cho module
+  courseId : Mã môn học có chứa module được feedback
+  moduleId : Mã module được feedback
+  rating : Số điểm mà sinh viên feedback cho module này (0-5)
+  comments : Bình phẩm của sinh viên cho module này
+  Sample: 
+  {
+    _id: String,
+    studentId : String, // Tham chiếu đến sinh viên
+    courseId : String,  // Tham chiếu đến môn học
+    moduleId : String,  // Tham chiếu đến module
+    rating : Double,
+    comments : String
+  }
+
+  e. InstructorFeedback
+  _id : Mã của 1 feedback cho giáo viên (duy nhất)
+  studentId : Mã sinh viên đã feedback
+  courseId : Mã của môn học của giáo viên đang dạy được feedback
+  instructorId: Mã giáo viên được feedback
+  rating : Số điểm mà sinh viên feedback cho giáo viên này (0-5)
+  comments: Bình phẩm của sinh viên cho giáo viên này
+  Sample: 
+  {
+    _id: String,
+    studentId : String, // Tham chiếu đến sinh viên
+    courseId : String, // Tham chiếu đến môn học
+    instructorId : String, // Tham chiếu đến giáo viên
+    rating : Double,
+    comments : String
+  }
+  
+---------------------------------------------
+2. MongoDB Aggregation Queries
+
+
+a. List course:
+
+Query: db.courses.find({ Id: "abc" })
+
+b. List all reviews for a specific module
+
+Query: db.moduleFeedback.find()
+
+c. Calculate the avarage rating for a module
+
+Query : 
+db.moduleFeedback.aggregate([
+  {
+    "$group": {
+      "_id": "$moduleId",
+      "averageRating": { "$avg": "$rating" }
+    }
+  },
+  {
+    "$sort": { "averageRating": -1 } // Sorts modules by highest rating
+  }
+]);
+
+
+d. Calculate the avarage rating for a instructor
+Query : 
+db.instructorFeedback.aggregate (
+    [{
+        "$group" : {
+            "_id" : "$instructorId",
+            "avarageRating" : {"$avg" : "$rating"}
+        }
+    },
+    {
+        "$sort" : {"avarageRating" : -1} // Sort by highest rating
+    }
+])
+
+e. Retrieve the list of the highest-rated modules within each module
+Query : 
+db.moduleFeedback.aggregate([
+  {
+    "$group": {
+      "_id": "$moduleId",
+      "highestRating": { "$max": "$rating" }
+    }
+  },
+  {
+    "$sort": { "highestRating": -1 } // Optional: Sort by highest rating
+  }
+]);

@@ -1,0 +1,131 @@
+---------------------------------------------
+MongoDB Assignment 2
+
+Your Account: huynm25
+---------------------------------------------
+
+1. Database & Collection Setup:
+
+use shop
+db.products.insertMany([
+    { _id: 1, name: "Laptop", category: "electronics", price: 1200, stock: 10 },
+    { _id: 2, name: "Smart Phone", category: "electronics", price: 800, stock: 15 },
+    { _id: 3, name: "Coffee Maker", category: "home_appliances", price: 150, stock: 25 },
+    { _id: 4, name: "Headphones", category: "electronics", price: 200, stock: 30 },
+    { _id: 5, name: "Office Chair", category: "furniture", price: 300, stock: 12 },
+    { _id: 6, name: "Bed", category: "furniture", price: 2000, stock: 5 },
+    { _id: 7, name: "Desk", category: "furniture", price: 600, stock: 10 },
+    { _id: 8, name: "Head Phone", category: "electronics", price: 250, stock: 35 },
+    { _id: 9, name: "TV", category: "electronics", price: 1500, stock: 12 },
+])
+
+
+2. CRUD Operations:
+
+· Add 2 new products (choose your own specifications).
+
+db.products.insertMany([
+    { _id: 10, name: "Camera", category: "electronics", price: 960, stock: 20 },
+    { _id: 11, name: "Air Purifier", category: "home_appliances", price: 800, stock: 15 },
+])
+
+· Find all products in "electronics" category.
+
+db.products.find({category : "electronics"})
+
+· Find products priced between 100 and 500.
+
+db.products.find({price : {$gte : 100 , $lte : 500}})
+
+· Apply 10% discount to all electronics products
+
+db.products.updateMany(
+    { category: "electronics" },
+    { $mul: { price: 0.9 } } // Price x 0.9
+)
+
+· Update stock to 40 for product with _id: 3
+
+db.products.updateOne(
+    { _id: 3 },
+    { $set: { stock: 40 } }
+)
+
+· Remove any products with stock = 0 (if exists)
+
+db.products.deleteMany({ stock: 0 })
+
+3. Index Optimization:
+
+db.products.createIndex({ category: 1, price: -1 }) // -1 for descending, 1 for ascending 
+
+The compound index optimizes queries where category is use for filtering and price is for sorting
+
+db.products.find({ category: "electronics", price: { $gte: 100, $lte: 500 } }) 
+=> The index efficiently filters products within the price range while leveraging the sorted order
+
+Run these queries with .explain("executionStats") to measure performance:
+
+Without Index
+db.products.find({ category: "electronics" }).sort({ price: -1 }).explain("executionStats") => executionTimeMillis: 12
+
+With Index
+db.products.find({ category: "electronics" }).sort({ price: -1 }).explain("executionStats") => executionTimeMillis: 0
+
+Improved Query Speed → Eliminates full collection scans.
+Efficient Sorting → Reduces sorting overhead, especially for large datasets.
+Optimized Range Queries → Queries with category and price conditions run seamlessly
+
+4.  Aggregation Pipeline - Build a pipeline to (Requirements: Use group, match, $sort stages, Show expected results in table format)
+
+- Group products by category and calculate: Total stock, Average price
+- Filter groups with average price > 500
+-  Sort by total stock (descending)
+db.products.aggregate([
+  {
+    "$group": {
+      "_id": "$category",
+      "totalStock": { "$sum": "$stock" },
+      "averagePrice": { "$avg": "$price" }
+    }
+  },
+  {
+    "$match": { "averagePrice": { "$gt": 500 } }
+  },
+  {
+    "$sort": { "totalStock": -1 }
+  }
+])
+
+
+Category,Total Stock,Average Price
+Electronics, 145, 549
+Furniture, 27, 966.66
+
+5. TTL Index:
+Create Time-to-Live index to auto-delete products older than 30 days (use createdAt field)
+db.products.createIndex({ createdAt: 1 }, { expireAfterSeconds: 2592000 }) 
+
+=> createdAt: 1 → Index on createdAt field -> expireAfterSeconds: 2592000 = 30days
+
+Documents must have a timestamp field (createdAt) to be eligible for TTL deletion
+
+db.products.insertOne({
+    name: "Gaming Laptop",
+    category: "electronics",
+    price: 1500,
+    stock: 10,
+    createdAt: new Date() // Auto-set timestamp
+})
+
+How MongoDB TTL Works:
+
+MongoDB automatically checks TTL indexes in the background.
+
+The TTL index applies only to indexed fields with Date type.
+
+Expired documents are permanently removed, not archived.
+
+Background cleanup occurs periodically (not instantly).
+
+
