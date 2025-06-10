@@ -28,14 +28,11 @@ export const createUser = (req: Request, res: Response) => {
     const existingUser = listUsers.find((user) => bodyId === user.id);
 
     if (!existingUser) {
-      const userBody = {
-        id: req.body["id"],
-        firstName: req.body["firstName"],
-        lastName: req.body["lastName"],
-        email: req.body["email"],
-        phone: req.body["phone"],
+      const newUser = {
+        id: listUsers.length + 1,
+        ...req.body,
       };
-      listUsers.push(userBody);
+      listUsers.push(newUser);
       sendResponse(res.json(listUsers), "Add success", listUsers, 200);
     } else {
       sendResponse(
@@ -54,14 +51,11 @@ export const updateUser = (req: Request, res: Response) => {
     const existingUser = listUsers.find((user) => bodyId === user.id + "");
 
     if (existingUser) {
-      const userBody = {
-        id: Number(bodyId),
-        firstName: req.body["firstName"],
-        lastName: req.body["lastName"],
-        email: req.body["email"],
-        phone: req.body["phone"],
+      const newUser = {
+        id: listUsers.length + 1,
+        ...req.body,
       };
-      listUsers.push(userBody);
+      listUsers.push(newUser);
       sendResponse(res.json(listUsers), "Update success", listUsers, 200);
     } else {
       sendResponse(

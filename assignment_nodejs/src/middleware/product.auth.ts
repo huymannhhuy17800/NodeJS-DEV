@@ -11,7 +11,9 @@ export const apiKeyMiddleware = (
 ) => {
   const apiKey = req.headers["api-key"];
   if (!apiKey || apiKey !== API_KEY) {
-    res.status(403).json({ error: "Unauthorized access" });
+    res
+      .status(403)
+      .json({ error: "Unauthorized access, setup api-key in header first" });
     return;
   }
   next();
