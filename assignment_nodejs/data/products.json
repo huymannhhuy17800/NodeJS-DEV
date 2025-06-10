@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "name": "Laptop",
+    "category": "electronic",
+    "price": 1200
+  },
+  {
+    "id": 2,
+    "name": "Smartphone",
+    "category": "electronic",
+    "price": 800
+  },
+  {
+    "id": 3,
+    "name": "Smartphone",
+    "category": "electronic",
+    "price": 800
+  },
+  {
+    "id": 4,
+    "name": "Smartphone",
+    "category": "electronic",
+    "price": 800
+  },
+  {
+    "id": 5,
+    "name": "Smartphone",
+    "category": "electronic",
+    "price": 800
+  },
+  {
+    "id": 6,
+    "name": "Smartphone",
+    "category": "electronic",
+    "price": 800
+  },
+  {
+    "id": 7,
+    "name": "Smartphone",
+    "category": "electronic",
+    "price": 800
+  },
+  {
+    "id": 8,
+    "name": "Smartphone",
+    "category": "electronic",
+    "price": 800
+  },
+  {
+    "id": 9,
+    "name": "Proby",
+    "category": "milk",
+    "price": 12
+  },
+  {
+    "id": 123,
+    "name": "Proby",
+    "category": "milk",
+    "price": 12
+  }
+]
