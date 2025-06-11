@@ -9,11 +9,11 @@ export const apiKeyMiddleware = (
   res: Response,
   next: NextFunction
 ) => {
-  const apiKey = req.headers["api-key"];
+  const apiKey = req.headers["x-api-key"];
   if (!apiKey || apiKey !== API_KEY) {
     res
       .status(403)
-      .json({ error: "Unauthorized access, setup api-key in header first" });
+      .json({ error: "Unauthorized access, setup x-api-key in header first" });
     return;
   }
   next();
