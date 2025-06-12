@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import multer from "multer";
 import path from "path";
 import {
@@ -8,12 +8,11 @@ import {
   getUser,
   updateUser,
 } from "../controllers/user.controller";
+import bodyParser from "body-parser";
 
 const router = express.Router();
 
 const baseUrl = "/users";
-
-//handle middleware
 
 // router.use(authenBasic);
 // config multer upload
@@ -28,18 +27,18 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({
-  storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // giới hạn 5 mb
-  fileFilter: (req, file, cb) => {
-    if (path.extname(file.originalname) != ".png") {
-      return cb(
-        new Error("File khong hop le, chi chap nhan JPEG, PNG hoac Excel.")
-      );
-    }
-    cb(null, true);
-  },
-});
+// const upload = multer({
+//   storage,
+//   limits: { fileSize: 5 * 1024 * 1024 }, // giới hạn 5 mb
+//   fileFilter: (req, file, cb) => {
+//     if (path.extname(file.originalname) != ".png") {
+//       return cb(
+//         new Error("File khong hop le, chi chap nhan JPEG, PNG hoac Excel.")
+//       );
+//     }
+//     cb(null, true);
+//   },
+// });
 
 router.get(baseUrl, getAllUsers);
 
@@ -50,7 +49,5 @@ router.post(baseUrl, createUser);
 router.put(baseUrl + "/:id", updateUser);
 
 router.delete(baseUrl + "/:id", deleteUser);
-
-// router.post("/upload", upload.single("file"), uploadFile);
 
 export default router;

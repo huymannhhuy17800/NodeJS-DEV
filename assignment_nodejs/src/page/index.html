@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Multi Content-Type Form</title>
+    <style>
+      body {
+        background: #f7f9fb;
+        font-family: "Segoe UI", Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        color: #222;
+      }
+      .container {
+        width: 100%;
+        max-width: 480px;
+        margin: 40px auto;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 4px 32px rgba(60, 80, 120, 0.08);
+        padding: 2.5rem 2.5rem 1.5rem 2.5rem;
+      }
+      h2 {
+        color: #2a6ae6;
+        letter-spacing: 1px;
+        text-align: left;
+        margin-top: 0;
+        margin-bottom: 1rem;
+        font-weight: 600;
+      }
+      form {
+        margin-bottom: 2rem;
+      }
+      input[type="text"],
+      input[type="email"],
+      input[type="file"] {
+        width: 100%;
+        padding: 0.7rem 1rem;
+        margin-bottom: 1rem;
+        border: 1px solid #d1dbe8;
+        border-radius: 8px;
+        font-size: 1rem;
+        background: #f8fafc;
+        transition: border-color 0.2s;
+      }
+      input[type="text"]:focus,
+      input[type="email"]:focus {
+        border-color: #2a6ae6;
+        outline: none;
+        background: #fff;
+      }
+      button[type="submit"] {
+        background: linear-gradient(90deg, #2a6ae6 60%, #9ecfff 100%);
+        color: #fff;
+        border: none;
+        padding: 0.7rem 2rem;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(42, 106, 230, 0.08);
+        transition: background 0.2s;
+      }
+      button[type="submit"]:hover {
+        background: linear-gradient(90deg, #195ccd 60%, #7dbbfa 100%);
+      }
+      hr {
+        border: none;
+        border-top: 1px solid #e4e8ee;
+        margin: 2.5rem 0 2rem 0;
+      }
+      .file-input-label {
+        display: block;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        color: #466199;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Submit as JSON</h2>
+      <form id="json-form" autocomplete="off">
+        <input type="text" name="username" placeholder="Username" required />
+        <input type="text" name="email" placeholder="Email" required />
+        <button type="submit">Send JSON</button>
+      </form>
+      <hr />
+
+      <h2>Submit as URL-encoded</h2>
+      <form action="/urlencoded" method="POST" autocomplete="off">
+        <input type="text" name="username" placeholder="Username" required />
+        <input type="text" name="email" placeholder="Email" required />
+        <button type="submit">Send URL-encoded</button>
+      </form>
+      <hr />
+
+      <h2>Submit as multipart/form-data (File Upload)</h2>
+      <form
+        action="/multipart"
+        method="POST"
+        enctype="multipart/form-data"
+        autocomplete="off"
+      >
+        <input type="text" name="username" placeholder="Username" required />
+        <label class="file-input-label" for="file-upload">Choose file:</label>
+        <input type="file" name="myfile" id="file-upload" />
+        <button type="submit">Send Multipart</button>
+      </form>
+    </div>
+
+    <script>
+      // Submit JSON form with fetch
+      document
+        .getElementById("json-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const username = document.querySelector(
+            '#json-form input[name="username"]'
+          ).value;
+          const email = document.querySelector(
+            '#json-form input[name="email"]'
+          ).value;
+
+          const res = await fetch("/json", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, email }),
+          });
+          const json = await res.json();
+          alert(JSON.stringify(json, null, 2));
+        });
+    </script>
+  </body>
+</html>

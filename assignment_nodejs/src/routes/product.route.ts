@@ -22,7 +22,7 @@ productRouter.get(baseUrl + "/:id", getProduct);
 productRouter.post(baseUrl, createProduct);
 
 // PUT update product by ID
-// productRouter.put(baseUrl + "/:id", updateProduct);
+productRouter.put(baseUrl + "/:id", updateProduct);
 
 // DELETE product by ID
 productRouter.delete("/:id", deleteProduct);

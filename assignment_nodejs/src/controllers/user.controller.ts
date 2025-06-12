@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { listUsers } from "../dtos/user.dto";
 import { sendResponse } from "../utils/sendResponse";
 import { User } from "../types/user.type";
+import path from "path";
 
 export const getAllUsers = (req: Request, res: Response) => {
   try {
@@ -81,5 +82,9 @@ export const deleteUser = (req: Request, res: Response) => {
     }
   } catch (error) {}
 };
+
+// export const sendFile = (req: Request, res: Response) => {
+//   res.sendFile(path.resolve(publicDir, "index.html"));
+// };
 
 export const submitUserData = () => {};

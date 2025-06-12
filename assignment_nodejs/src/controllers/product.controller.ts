@@ -67,8 +67,14 @@ export const updateProduct = (req: Request, res: Response) => {
     const index = products.findIndex(
       (p: any) => p.id === parseInt(req.params.id)
     );
-    if (index === -1)
-      return res.status(404).json({ error: "Product not found" });
+    if (index === -1) {
+      sendResponse(
+        res.json({ error: "Product not found" }),
+        "Product not found",
+        null,
+        404
+      );
+    }
 
     products[index] = { ...products[index], ...req.body };
     saveProducts(products);
