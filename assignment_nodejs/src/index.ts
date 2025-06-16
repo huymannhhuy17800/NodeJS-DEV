@@ -50,6 +50,10 @@ app.listen(port, () => {
 });
 
 //Create folder cert and run script to get 2 SSL certificate files 'key.pem' and 'cert.pem'
+// script to run
+//  openssl genrsa -out server-key.pem 2048
+//  openssl req -new -key key.pem -out csr.pem
+//  openssl x509 -req -in csr.pem -signkey key.pem -out cert.pem -days 365
 https
   .createServer(options, (req, res) => {
     res.writeHead(200, { "Content-Type": "text/html" });
