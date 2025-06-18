@@ -1,0 +1,29 @@
+{
+  "name": "assignment1_nodejs_jwt",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "npx --exec npx tsx src/index.ts",
+    "script": "npx tsx src/scripts/generateData.ts"
+  },
+  "author": "huynm25",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.9",
+    "@types/mongoose": "^5.11.97",
+    "bcrypt": "^6.0.0",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "joi": "^17.13.3",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.16.0",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  },
+  "type": "module"
+}
